@@ -18,6 +18,5 @@ app.use(signupRouter)
 app.use(errorHandler)
 
 app.listen(3000, () => {
-  console.log('v20')
   console.log('🎧 Listening on port 3000')
 })
