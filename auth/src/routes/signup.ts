@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
+import jwt from 'jsonwebtoken'
 import { User } from '../models/User'
 import { RequestValidationError } from '../errors/request-validation-error'
+import { BadRequestError } from '../errors/bad-request-error'
 
 const router = express.Router()
 
@@ -26,8 +28,7 @@ router.post(
     const existingUser = await User.findOne({ email })
 
     if (existingUser) {
-      console.log('Email in use')
-      return res.send({})
+      throw new BadRequestError('Email already in use')
     }
 
     // HASH PASSWORD HERE
@@ -35,7 +36,26 @@ router.post(
     const user = User.build({ email, password })
     await user.save()
 
-    res.status(201).send(user)
+    // GENERATE JWT
+    const userJwt = jwt.sign(
+      {
+        id: user.id,
+        email: user.email
+      },
+      process.env.JWT_KEY!
+    )
+
+    //STORE JWT ON SESSION OBJECT
+    req.session = {
+      jwt: userJwt
+    }
+
+    const resUser = {
+      id: user.id,
+      email: user.email
+    }
+
+    res.status(201).send(resUser)
   }
 )
 
