@@ -46,12 +46,7 @@ router.post(
       jwt: userJwt
     }
 
-    const resUser = {
-      id: user.id,
-      email: user.email
-    }
-
-    res.status(201).send(resUser)
+    res.status(201).send(user)
   }
 )
 
