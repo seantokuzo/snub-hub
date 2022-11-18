@@ -8,6 +8,7 @@ interface UserAttrs {
 }
 
 // Describes the properties that a User Model has
+// Adding the build method to our User Model
 interface UserModel extends mongoose.Model<UserDoc> {
   build(attrs: UserAttrs): UserDoc
 }
